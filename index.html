@@ -501,8 +501,8 @@
 
             qrcodeInstance = new QRCode(document.getElementById('qrcode'), {
                 text: qrValue,
-                width: 200,
-                height: 200,
+                width: 512, // High resolution
+                height: 512,
                 colorDark: fgColor,
                 colorLight: bgColor,
                 correctLevel: QRCode.CorrectLevel.H
@@ -768,18 +768,18 @@
             }, 2500);
         }
 
-        // ===== Download QR (Android Native Bridge) =====
+        // ===== Download QR (Fixed - Working with Canvas) =====
         function downloadQR() {
-            const qrImg = document.querySelector('#qrcode img');
-            if (qrImg && qrImg.src) {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (canvas) {
+                const dataUrl = canvas.toDataURL("image/png");
                 try {
                     if (typeof window.AndroidInterface !== 'undefined' && window.AndroidInterface) {
-                        window.AndroidInterface.downloadBase64Image(qrImg.src);
+                        window.AndroidInterface.downloadBase64Image(dataUrl);
                         showToast('ပုံရိပ်ကို သိမ်းဆည်းနေပါသည်...');
                     } else {
-                        // Browser Fallback
                         const link = document.createElement('a');
-                        link.href = qrImg.src;
+                        link.href = dataUrl;
                         link.download = `Creator_QR_${Date.now()}.png`;
                         document.body.appendChild(link);
                         link.click();
@@ -795,27 +795,32 @@
             }
         }
 
-        // ===== Share QR (Android Native Bridge) =====
-        function shareQR() {
-            const qrImg = document.querySelector('#qrcode img');
-            if (qrImg && qrImg.src) {
+        // ===== Share QR (Fixed - Working with Native Share) =====
+        async function shareQR() {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (canvas) {
+                const dataUrl = canvas.toDataURL("image/png");
                 try {
                     if (typeof window.AndroidInterface !== 'undefined' && window.AndroidInterface) {
-                        window.AndroidInterface.shareBase64Image(qrImg.src);
+                        window.AndroidInterface.shareBase64Image(dataUrl);
                     } else if (navigator.share) {
-                        fetch(qrImg.src)
-                            .then(res => res.blob())
-                            .then(blob => {
-                                const file = new File([blob], 'qrcode.png', { type: blob.type });
-                                navigator.share({ files: [file], title: 'Creator QR' }).catch(() => {});
-                            });
+                        const response = await fetch(dataUrl);
+                        const blob = await response.blob();
+                        const file = new File([blob], 'qrcode.png', { type: 'image/png' });
+                        
+                        await navigator.share({
+                            files: [file],
+                            title: 'Creator QR',
+                            text: 'Scan this QR code'
+                        });
                     } else {
-                        copyToClipboard(document.getElementById('qrText').value || document.getElementById('qrUrl').value);
-                        showToast('အချက်အလက်များကို ကူးယူပြီးပါပြီ။');
+                        const qrVal = document.getElementById('qrText').value || document.getElementById('qrUrl').value;
+                        copyToClipboard(qrVal);
+                        showToast('Share မရသဖြင့် စာသားကို Copy ကူးပေးလိုက်ပါသည်။');
                     }
                 } catch (error) {
                     console.error('Share Error:', error);
-                    showToast('Share လုပ်ရာတွင် အမှားရှိပါသည်။');
+                    showToast('Share လုပ်ရာတွင် အခက်အခဲရှိပါသည်။');
                 }
             } else {
                 showToast('QR Code မရှိသေးပါ။ ဦးစွာဖန်တီးပါ။');
