@@ -68,6 +68,13 @@
         .scan-laser {
             animation: scan 2s linear infinite;
         }
+
+        /* Sharper image output */
+        #qrcode img {
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            border-radius: 12px;
+        }
     </style>
 </head>
 <body class="bg-gray-50 dark:bg-zinc-950 text-gray-900 dark:text-zinc-100 min-h-screen flex flex-col">
@@ -114,19 +121,14 @@
 
                 <!-- Input Fields Container -->
                 <div class="space-y-3 mt-4">
-                    <!-- Text Input -->
                     <div id="input-text" class="input-group">
                         <label class="block text-xs font-medium mb-1 text-gray-500 dark:text-zinc-400">စာသား သို့မဟုတ် အချက်အလက်များ</label>
                         <textarea id="qrText" rows="3" class="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-950 focus:outline-none focus:ring-2 focus:ring-primary-500" placeholder="ဤနေရာတွင် ရေးသားပါ..."></textarea>
                     </div>
-
-                    <!-- URL Input -->
                     <div id="input-url" class="input-group hidden">
                         <label class="block text-xs font-medium mb-1 text-gray-500 dark:text-zinc-400">ဝဘ်ဆိုဒ်လိပ်စာ (URL)</label>
                         <input type="url" id="qrUrl" class="w-full px-3 py-2 text-sm rounded-xl border border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-950 focus:outline-none focus:ring-2 focus:ring-primary-500" placeholder="https://example.com" value="https://">
                     </div>
-
-                    <!-- Wi-Fi Input -->
                     <div id="input-wifi" class="input-group hidden space-y-2">
                         <div>
                             <label class="block text-xs font-medium mb-1 text-gray-500 dark:text-zinc-400">Wi-Fi အမည် (SSID)</label>
@@ -170,7 +172,6 @@
                             <span id="bgColorText" class="text-xs uppercase font-mono">#FFFFFF</span>
                         </div>
                     </div>
-                    <!-- NEW: Size and Logo Options -->
                     <div>
                         <label class="block text-[11px] font-medium text-gray-500 dark:text-zinc-400 mb-1">QR အရွယ်အစား (Size)</label>
                         <select id="qrSize" class="w-full px-3 py-2 text-xs rounded-xl border border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-950 focus:outline-none focus:ring-2 focus:ring-primary-500">
@@ -219,7 +220,6 @@
         <!-- PAGE 2: SCANNER & REAL HISTORY -->
         <section id="page-scan" class="page-transition hidden-page space-y-4">
             
-            <!-- Live Camera Scanner View Card -->
             <div id="camera-scanner-card" class="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-gray-100 dark:border-zinc-800 text-center space-y-3 hidden">
                 <div class="flex justify-between items-center px-1">
                     <h3 class="text-xs font-bold text-gray-500 dark:text-zinc-400 uppercase tracking-wider flex items-center gap-1">
@@ -230,24 +230,14 @@
                     </button>
                 </div>
                 
-                <!-- Live Video Preview Viewport -->
                 <div class="relative w-full aspect-square max-w-[280px] mx-auto overflow-hidden rounded-2xl bg-black border-2 border-primary-500">
                     <video id="scanner-video" class="w-full h-full object-cover" playsinline></video>
-                    
-                    <!-- Scanner Laser Overlay UI -->
                     <div class="absolute inset-0 border-[24px] border-black/40"></div>
                     <div class="absolute inset-[24px] border-2 border-dashed border-primary-400 opacity-60"></div>
-                    
-                    <!-- Top Left Corner -->
                     <div class="absolute top-[20px] left-[20px] w-6 h-6 border-t-4 border-l-4 border-primary-500 rounded-tl-sm"></div>
-                    <!-- Top Right Corner -->
                     <div class="absolute top-[20px] right-[20px] w-6 h-6 border-t-4 border-r-4 border-primary-500 rounded-tr-sm"></div>
-                    <!-- Bottom Left Corner -->
                     <div class="absolute bottom-[20px] left-[20px] w-6 h-6 border-b-4 border-l-4 border-primary-500 rounded-bl-sm"></div>
-                    <!-- Bottom Right Corner -->
                     <div class="absolute bottom-[20px] right-[20px] w-6 h-6 border-b-4 border-r-4 border-primary-500 rounded-br-sm"></div>
-                    
-                    <!-- Laser Line -->
                     <div class="absolute left-[24px] right-[24px] h-[3px] bg-gradient-to-r from-transparent via-primary-500 to-transparent shadow-md scan-laser"></div>
                 </div>
                 <p class="text-[11px] text-gray-400">QR Code ကို အပေါ်ပါ လေးထောင့်ကွက်အတွင်း တည့်တည့်ထားပေးပါ။</p>
@@ -263,41 +253,33 @@
                 </div>
                 
                 <div class="grid grid-cols-2 gap-2">
-                    <!-- Live Camera Scan Button -->
                     <button onclick="startCameraScan()" class="bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 px-4 rounded-xl text-xs transition flex items-center justify-center gap-1.5 active:scale-95">
                         <i data-lucide="camera" class="w-4 h-4"></i>
                         ကင်မရာဖွင့်မည်
                     </button>
-                    <!-- Gallery File Scanner Button -->
                     <button onclick="document.getElementById('qr-file-input').click()" class="bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 hover:bg-gray-200 dark:hover:bg-zinc-700 font-medium py-3 px-4 rounded-xl text-xs transition flex items-center justify-center gap-1.5 active:scale-95">
                         <i data-lucide="image" class="w-4 h-4"></i>
                         ပုံရွေးချယ်မည်
                     </button>
                 </div>
-                <!-- Hidden Input for file selection -->
                 <input type="file" id="qr-file-input" accept="image/*" class="hidden" onchange="scanQRImage(event)">
             </div>
 
-            <!-- Dynamic Scan & Generate History List -->
             <div class="space-y-2">
                 <div class="flex items-center justify-between px-1">
                     <h3 class="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-zinc-500">ယခင်မှတ်တမ်းများ</h3>
                     <button id="clearHistoryBtn" onclick="clearHistory()" class="text-[10px] text-red-500 font-medium hover:underline hidden">မှတ်တမ်းအားလုံးဖျက်ရန်</button>
                 </div>
-                <div id="history-container" class="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-100 dark:border-zinc-800 divide-y divide-gray-100 dark:divide-zinc-800 overflow-hidden">
-                    <!-- Dynamic Items will be rendered here by JavaScript -->
-                </div>
+                <div id="history-container" class="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-100 dark:border-zinc-800 divide-y divide-gray-100 dark:divide-zinc-800 overflow-hidden"></div>
             </div>
         </section>
 
-        <!-- PAGE 3: CREATOR PROFILE (NOVANEX INFO) -->
+        <!-- PAGE 3: CREATOR PROFILE -->
         <section id="page-profile" class="page-transition hidden-page space-y-4">
-            <!-- Creator Card -->
             <div class="bg-gradient-to-br from-zinc-900 to-black p-6 rounded-3xl text-white relative overflow-hidden shadow-xl border border-zinc-800">
                 <div class="absolute -right-10 -bottom-10 opacity-10">
                     <i data-lucide="qr-code" class="w-48 h-48"></i>
                 </div>
-                
                 <div class="flex items-start justify-between">
                     <div>
                         <span class="bg-primary-500/20 text-primary-400 border border-primary-500/30 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Official Creator</span>
@@ -308,7 +290,6 @@
                         <i data-lucide="terminal" class="w-6 h-6 text-primary-400"></i>
                     </div>
                 </div>
-
                 <div class="mt-8 pt-4 border-t border-white/10 flex justify-between items-center text-xs">
                     <div>
                         <span class="block text-[9px] text-gray-500 uppercase tracking-widest">Email Support</span>
@@ -320,7 +301,6 @@
                 </div>
             </div>
 
-            <!-- App Details & Features list -->
             <div class="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-100 dark:border-zinc-800 divide-y divide-gray-100 dark:divide-zinc-800 overflow-hidden">
                 <div class="p-4 flex items-center justify-between">
                     <div class="flex items-center gap-3">
@@ -350,8 +330,6 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Credits and Love -->
             <div class="text-center py-4">
                 <p class="text-xs text-gray-400 dark:text-zinc-500">Made with  by NOVANEX Development</p>
             </div>
@@ -372,20 +350,15 @@
                 </button>
             </div>
             <div class="bg-gray-50 dark:bg-zinc-950 p-4 rounded-xl border border-gray-100 dark:border-zinc-800 max-h-48 overflow-y-auto">
-                <p id="scanResultText" class="text-xs break-all whitespace-pre-wrap select-all font-mono text-gray-800 dark:text-gray-200"></p>
+                <p id="scanResultText" class="text-xs break-all whitespace-pre-wrap font-mono text-gray-800 dark:text-gray-200"></p>
             </div>
             <div class="flex flex-col gap-2">
-                <!-- NEW: Open Link Button -->
                 <button id="openUrlBtn" class="hidden w-full bg-sky-500 text-white font-medium py-2.5 px-4 rounded-xl text-xs transition active:scale-95 flex items-center justify-center gap-2">
                     <i data-lucide="external-link" class="w-4 h-4"></i> Browser တွင်ဖွင့်မည်
                 </button>
                 <div class="flex gap-2">
-                    <button onclick="copyScanResult()" class="flex-1 bg-primary-500 text-white hover:bg-primary-600 font-medium py-2.5 px-4 rounded-xl text-xs transition active:scale-95">
-                        Copy ကူးမည်
-                    </button>
-                    <button onclick="closeScanModal()" class="flex-1 bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 hover:bg-gray-200 dark:hover:bg-zinc-700 font-medium py-2.5 px-4 rounded-xl text-xs transition active:scale-95">
-                        ပိတ်မည်
-                    </button>
+                    <button onclick="copyScanResult()" class="flex-1 bg-primary-500 text-white hover:bg-primary-600 font-medium py-2.5 px-4 rounded-xl text-xs transition active:scale-95">Copy ကူးမည်</button>
+                    <button onclick="closeScanModal()" class="flex-1 bg-gray-100 dark:bg-zinc-800 text-gray-700 dark:text-zinc-300 hover:bg-gray-200 dark:hover:bg-zinc-700 font-medium py-2.5 px-4 rounded-xl text-xs transition active:scale-95">ပိတ်မည်</button>
                 </div>
             </div>
         </div>
@@ -399,15 +372,15 @@
 
     <!-- App Bottom Navigation Bar -->
     <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-zinc-900/95 border-t border-gray-200 dark:border-zinc-800 backdrop-blur-md px-4 py-2 pb-safe-bottom flex justify-around items-center">
-        <button onclick="navTo('generate')" id="nav-generate" class="flex flex-col items-center justify-center py-1 text-primary-500 transition-colors w-16">
+        <button onclick="navTo('generate')" id="nav-generate" class="flex flex-col items-center justify-center py-1 text-primary-500 w-16 transition-colors">
             <i data-lucide="qr-code" class="w-5 h-5"></i>
             <span class="text-[9px] font-bold mt-1">ဖန်တီးရန်</span>
         </button>
-        <button onclick="navTo('scan')" id="nav-scan" class="flex flex-col items-center justify-center py-1 text-gray-400 dark:text-zinc-500 hover:text-gray-600 transition-colors w-16">
+        <button onclick="navTo('scan')" id="nav-scan" class="flex flex-col items-center justify-center py-1 text-gray-400 dark:text-zinc-500 w-16 transition-colors">
             <i data-lucide="scan-line" class="w-5 h-5"></i>
             <span class="text-[9px] font-medium mt-1">ဖတ်ရန်</span>
         </button>
-        <button onclick="navTo('profile')" id="nav-profile" class="flex flex-col items-center justify-center py-1 text-gray-400 dark:text-zinc-500 hover:text-gray-600 transition-colors w-16">
+        <button onclick="navTo('profile')" id="nav-profile" class="flex flex-col items-center justify-center py-1 text-gray-400 dark:text-zinc-500 w-16 transition-colors">
             <i data-lucide="user" class="w-5 h-5"></i>
             <span class="text-[9px] font-medium mt-1">Creator</span>
         </button>
@@ -415,62 +388,33 @@
 
     <!-- Native App Script -->
     <script>
-        // Init Lucide Icons
         lucide.createIcons();
 
-        // Variables
-        let currentType = 'text';
-        let qrcodeInstance = null;
-        let historyList = [];
-        let activeScanResult = "";
-        let uploadedLogo = null;
-        
-        // Live Camera Scanner Variables
-        let videoStream = null;
-        let isScanning = false;
+        let currentType = 'text', historyList = [], uploadedLogo = null, isScanning = false, videoStream = null;
         const videoElement = document.getElementById('scanner-video');
-        const cameraCard = document.getElementById('camera-scanner-card');
-        const controlsCard = document.getElementById('scanner-controls-card');
 
-        // Sync colors input with label
-        document.getElementById('fgColor').addEventListener('input', (e) => {
-            document.getElementById('fgColorText').innerText = e.target.value;
-        });
-        document.getElementById('bgColor').addEventListener('input', (e) => {
-            document.getElementById('bgColorText').innerText = e.target.value;
-        });
+        // Color labels update
+        document.getElementById('fgColor').addEventListener('input', (e) => document.getElementById('fgColorText').innerText = e.target.value.toUpperCase());
+        document.getElementById('bgColor').addEventListener('input', (e) => document.getElementById('bgColorText').innerText = e.target.value.toUpperCase());
 
-        // Theme Switcher
-        const themeToggleBtn = document.getElementById('themeToggleBtn');
-        const htmlElement = document.documentElement;
-        
-        themeToggleBtn.addEventListener('click', () => {
-            if (htmlElement.classList.contains('dark')) {
-                htmlElement.classList.remove('dark');
-                document.getElementById('themeIcon').setAttribute('data-lucide', 'moon');
-                localStorage.setItem('theme', 'light');
-            } else {
-                htmlElement.classList.add('dark');
-                document.getElementById('themeIcon').setAttribute('data-lucide', 'sun');
-                localStorage.setItem('theme', 'dark');
-            }
+        // Theme Toggle
+        document.getElementById('themeToggleBtn').addEventListener('click', () => {
+            const html = document.documentElement;
+            const isDark = html.classList.toggle('dark');
+            document.getElementById('themeIcon').setAttribute('data-lucide', isDark ? 'sun' : 'moon');
             lucide.createIcons();
         });
 
-        // Input Type switcher
         function switchInputType(type) {
             currentType = type;
             document.querySelectorAll('.input-group').forEach(el => el.classList.add('hidden'));
             document.getElementById(`input-${type}`).classList.remove('hidden');
-
             document.querySelectorAll('.type-tab').forEach(tab => {
                 tab.className = "type-tab p-2 rounded-xl flex flex-col items-center justify-center gap-1 border border-gray-200 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 text-gray-500 dark:text-zinc-400 transition";
             });
-            const activeTab = document.getElementById(`tab-${type}`);
-            activeTab.className = "type-tab p-2 rounded-xl flex flex-col items-center justify-center gap-1 border border-primary-500 bg-primary-50 dark:bg-primary-500/10 text-primary-500 transition";
+            document.getElementById(`tab-${type}`).className = "type-tab p-2 rounded-xl flex flex-col items-center justify-center gap-1 border border-primary-500 bg-primary-50 dark:bg-primary-500/10 text-primary-500 transition";
         }
 
-        // Handle Logo Upload
         function handleLogoUpload(event) {
             const file = event.target.files[0];
             if (file) {
@@ -484,53 +428,32 @@
             }
         }
 
-        // Navigation
         function navTo(pageId) {
-            if (pageId !== 'scan') {
-                stopCameraScan();
-            }
-
+            stopCameraScan();
             document.querySelectorAll('main > section').forEach(el => el.classList.add('hidden-page'));
             document.getElementById(`page-${pageId}`).classList.remove('hidden-page');
-
-            const navItems = ['generate', 'scan', 'profile'];
-            navItems.forEach(item => {
+            ['generate', 'scan', 'profile'].forEach(item => {
                 const navBtn = document.getElementById(`nav-${item}`);
-                if (item === pageId) {
-                    navBtn.className = "flex flex-col items-center justify-center py-1 text-primary-500 transition-colors w-16";
-                    navBtn.querySelector('span').classList.add('font-bold');
-                    navBtn.querySelector('span').classList.remove('font-medium');
-                } else {
-                    navBtn.className = "flex flex-col items-center justify-center py-1 text-gray-400 dark:text-zinc-500 hover:text-gray-600 transition-colors w-16";
-                    navBtn.querySelector('span').classList.remove('font-bold');
-                    navBtn.querySelector('span').classList.add('font-medium');
-                }
+                const isActive = item === pageId;
+                navBtn.className = `flex flex-col items-center justify-center py-1 ${isActive ? 'text-primary-500' : 'text-gray-400 dark:text-zinc-500'} w-16 transition-colors`;
+                navBtn.querySelector('span').className = `text-[9px] mt-1 ${isActive ? 'font-bold' : 'font-medium'}`;
             });
         }
 
-        // QR Generator
+        // GENERATE LOGIC - SHARPER VERSION
         function generateQRCode() {
             let qrValue = "";
-            
-            if (currentType === 'text') {
-                qrValue = document.getElementById('qrText').value;
-            } else if (currentType === 'url') {
-                qrValue = document.getElementById('qrUrl').value;
-            } else if (currentType === 'wifi') {
+            if (currentType === 'text') qrValue = document.getElementById('qrText').value;
+            else if (currentType === 'url') qrValue = document.getElementById('qrUrl').value;
+            else if (currentType === 'wifi') {
                 const ssid = document.getElementById('wifiSsid').value;
                 const pass = document.getElementById('wifiPass').value;
                 const type = document.getElementById('wifiType').value;
-                if (!ssid) {
-                    showToast('ကျေးဇူးပြု၍ Wi-Fi အမည်ထည့်ပါ။');
-                    return;
-                }
+                if (!ssid) return showToast('ကျေးဇူးပြု၍ Wi-Fi အမည်ထည့်ပါ။');
                 qrValue = `WIFI:S:${ssid};T:${type};P:${pass};;`;
             }
 
-            if (!qrValue || qrValue.trim() === "" || qrValue === "https://") {
-                showToast('ကျေးဇူးပြု၍ လိုအပ်သောအချက်အလက်များထည့်ပါ။');
-                return;
-            }
+            if (!qrValue || qrValue.trim() === "" || qrValue === "https://") return showToast('အချက်အလက်များထည့်ပါ။');
 
             const fgColor = document.getElementById('fgColor').value;
             const bgColor = document.getElementById('bgColor').value;
@@ -539,382 +462,208 @@
             const qrContainer = document.getElementById('qrcode');
             qrContainer.innerHTML = "";
 
-            qrcodeInstance = new QRCode(qrContainer, {
+            // Create High-Res QR
+            const qrcode = new QRCode(qrContainer, {
                 text: qrValue,
                 width: size,
                 height: size,
                 colorDark: fgColor,
                 colorLight: bgColor,
-                correctLevel: QRCode.CorrectLevel.H
+                correctLevel: QRCode.CorrectLevel.H // High EC for logo support
             });
 
-            // Logic to draw logo on canvas
-            if (uploadedLogo) {
-                setTimeout(() => {
-                    const canvas = qrContainer.querySelector('canvas');
-                    if (canvas) {
-                        const ctx = canvas.getContext('2d');
-                        const img = new Image();
-                        img.onload = () => {
-                            const logoSize = size * 0.2; // 20% of QR size
-                            const logoPos = (size - logoSize) / 2;
-                            ctx.fillStyle = bgColor;
-                            ctx.fillRect(logoPos - 5, logoPos - 5, logoSize + 10, logoSize + 10);
-                            ctx.drawImage(img, logoPos, logoPos, logoSize, logoSize);
-                            
-                            // Re-generate image from canvas for sharing
-                            const finalImg = qrContainer.querySelector('img');
-                            if (finalImg) finalImg.src = canvas.toDataURL();
-                        };
-                        img.src = uploadedLogo;
-                    }
-                }, 100);
-            }
+            // Wait for QR to render on canvas
+            setTimeout(() => {
+                const canvas = qrContainer.querySelector('canvas');
+                if (!canvas) return;
+
+                if (uploadedLogo) {
+                    const ctx = canvas.getContext('2d');
+                    const img = new Image();
+                    img.onload = () => {
+                        const logoSize = size * 0.22;
+                        const logoPos = (size - logoSize) / 2;
+                        
+                        // Recolor Logo Logic
+                        const offCanvas = document.createElement('canvas');
+                        offCanvas.width = logoSize;
+                        offCanvas.height = logoSize;
+                        const offCtx = offCanvas.getContext('2d');
+                        offCtx.drawImage(img, 0, 0, logoSize, logoSize);
+                        offCtx.globalCompositeOperation = 'source-in';
+                        offCtx.fillStyle = fgColor;
+                        offCtx.fillRect(0, 0, logoSize, logoSize);
+                        
+                        // Draw white border & logo on QR
+                        ctx.fillStyle = bgColor;
+                        ctx.beginPath();
+                        ctx.roundRect(logoPos - 6, logoPos - 6, logoSize + 12, logoSize + 12, 10);
+                        ctx.fill();
+                        ctx.drawImage(offCanvas, logoPos, logoPos);
+                        
+                        // Finalize High-Res Image
+                        updateQRImage(qrContainer, canvas);
+                    };
+                    img.src = uploadedLogo;
+                } else {
+                    updateQRImage(qrContainer, canvas);
+                }
+            }, 150);
 
             addToHistory(currentType, qrValue);
-
-            const resultCard = document.getElementById('resultCard');
-            resultCard.classList.remove('hidden');
-            resultCard.scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('resultCard').classList.remove('hidden');
+            document.getElementById('resultCard').scrollIntoView({ behavior: 'smooth' });
             showToast('QR Code ဖန်တီးပြီးပါပြီ။');
         }
 
-        // Camera Scanner
-        async function startCameraScan() {
-            if (isScanning) return;
-            showToast('ကင်မရာ အသုံးပြုခွင့်တောင်းခံနေပါသည်...');
-
-            try {
-                const stream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: "environment", width: { ideal: 400 }, height: { ideal: 400 } }
-                });
-                
-                videoStream = stream;
-                videoElement.srcObject = stream;
-                videoElement.setAttribute("playsinline", true);
-                videoElement.play();
-                
-                isScanning = true;
-                cameraCard.classList.remove('hidden');
-                controlsCard.classList.add('hidden');
-                
-                requestAnimationFrame(tickCamera);
-            } catch (err) {
-                console.error(err);
-                showToast('ကင်မရာဖွင့်မရပါ။ Permission ကိုစစ်ဆေးပါ။');
+        function updateQRImage(container, canvas) {
+            const finalImg = container.querySelector('img');
+            if (finalImg) {
+                finalImg.src = canvas.toDataURL("image/png", 1.0);
+                finalImg.style.width = "200px"; // Visual size in app
+                finalImg.style.height = "200px";
             }
         }
 
+        // CAMERA SCANNER
+        async function startCameraScan() {
+            if (isScanning) return;
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                videoStream = stream;
+                videoElement.srcObject = stream;
+                videoElement.play();
+                isScanning = true;
+                document.getElementById('camera-scanner-card').classList.remove('hidden');
+                document.getElementById('scanner-controls-card').classList.add('hidden');
+                requestAnimationFrame(tickCamera);
+            } catch (err) { showToast('ကင်မရာဖွင့်မရပါ။'); }
+        }
+
         function stopCameraScan() {
-            if (!isScanning) return;
-            
             isScanning = false;
-            if (videoStream) {
-                videoStream.getTracks().forEach(track => track.stop());
-            }
-            videoElement.srcObject = null;
-            cameraCard.classList.add('hidden');
-            controlsCard.classList.remove('hidden');
+            if (videoStream) videoStream.getTracks().forEach(track => track.stop());
+            document.getElementById('camera-scanner-card').classList.add('hidden');
+            document.getElementById('scanner-controls-card').classList.remove('hidden');
         }
 
         function tickCamera() {
             if (!isScanning) return;
-
             if (videoElement.readyState === videoElement.HAVE_ENOUGH_DATA) {
                 const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
                 canvas.width = videoElement.videoWidth;
                 canvas.height = videoElement.videoHeight;
-                context.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-                
-                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-                const code = jsQR(imageData.data, imageData.width, imageData.height, {
-                    inversionAttempts: "dontInvert",
-                });
-
-                if (code && code.data.trim() !== "") {
-                    const content = code.data;
-                    let detectedType = 'text';
-                    if (content.startsWith('http://') || content.startsWith('https://')) {
-                        detectedType = 'url';
-                    } else if (content.startsWith('WIFI:')) {
-                        detectedType = 'wifi';
-                    }
-
+                canvas.getContext('2d').drawImage(videoElement, 0, 0);
+                const code = jsQR(canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data, canvas.width, canvas.height, { inversionAttempts: "attemptBoth" });
+                if (code) {
                     stopCameraScan();
-                    addToHistory(detectedType, content);
-                    showScanResultModal(content, detectedType);
-                    showToast('QR Code ဖတ်ရှုခြင်း အောင်မြင်ပါသည်။');
+                    showScanResultModal(code.data);
                     return;
                 }
             }
-            
-            if (isScanning) {
-                requestAnimationFrame(tickCamera);
-            }
+            requestAnimationFrame(tickCamera);
         }
 
-        // Scan QR Image
         function scanQRImage(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             showToast('ပုံရိပ်ကို စစ်ဆေးနေပါသည်...');
-
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = (e) => {
                 const img = new Image();
-                img.onload = function() {
+                img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const context = canvas.getContext('2d');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    context.drawImage(img, 0, 0, img.width, img.height);
-                    
-                    try {
-                        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-                        const code = jsQR(imageData.data, imageData.width, imageData.height, {
-                            inversionAttempts: "dontInvert",
-                        });
-                        
-                        if (code) {
-                            const content = code.data;
-                            let detectedType = 'text';
-                            if (content.startsWith('http://') || content.startsWith('https://')) {
-                                detectedType = 'url';
-                            } else if (content.startsWith('WIFI:')) {
-                                detectedType = 'wifi';
-                            }
-                            
-                            addToHistory(detectedType, content);
-                            showScanResultModal(content, detectedType);
-                            showToast('QR Code ဖတ်ရှုခြင်း အောင်မြင်ပါသည်။');
-                        } else {
-                            showToast('ပုံရိပ်တွင် QR Code ရှာမတွေ့ပါ။');
-                        }
-                    } catch (err) {
-                        showToast('စစ်ဆေးရာတွင် အမှားအယွင်းရှိခဲ့သည်။');
-                    }
-                    document.getElementById('qr-file-input').value = "";
+                    const ctx = canvas.getContext('2d');
+                    const scale = Math.min(1000 / img.width, 1000 / img.height, 1);
+                    canvas.width = img.width * scale;
+                    canvas.height = img.height * scale;
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    const code = jsQR(ctx.getImageData(0, 0, canvas.width, canvas.height).data, canvas.width, canvas.height, { inversionAttempts: "attemptBoth" });
+                    if (code) showScanResultModal(code.data);
+                    else showToast('QR ရှာမတွေ့ပါ။');
                 };
                 img.src = e.target.result;
             };
             reader.readAsDataURL(file);
         }
 
-        // History
-        function addToHistory(type, content) {
-            const timeString = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            const dateString = new Date().toLocaleDateString([], { month: 'short', day: 'numeric' });
-            
-            const newItem = {
-                id: Date.now(),
-                type: type,
-                content: content,
-                time: `${dateString}၊ ${timeString}`
-            };
+        function showScanResultModal(content) {
+            activeScanResult = content;
+            document.getElementById('scanResultText').innerText = content;
+            const openBtn = document.getElementById('openUrlBtn');
+            if (content.startsWith('http')) {
+                openBtn.classList.remove('hidden');
+                openBtn.onclick = () => window.open(content, '_blank');
+            } else openBtn.classList.add('hidden');
+            document.getElementById('scanResultModal').classList.replace('hidden', 'flex');
+            addToHistory('scan', content);
+        }
 
-            historyList.unshift(newItem);
+        function closeScanModal() { document.getElementById('scanResultModal').classList.replace('flex', 'hidden'); }
+        function copyScanResult() { copyToClipboard(activeScanResult); closeScanModal(); }
+
+        function addToHistory(type, content) {
+            historyList.unshift({ id: Date.now(), type, content, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
             renderHistory();
         }
 
         function renderHistory() {
             const container = document.getElementById('history-container');
-            const clearBtn = document.getElementById('clearHistoryBtn');
-            
             if (historyList.length === 0) {
-                clearBtn.classList.add('hidden');
-                container.innerHTML = `
-                    <div class="p-8 text-center text-gray-400 dark:text-zinc-500 text-xs">
-                        <i data-lucide="history" class="w-8 h-8 mx-auto mb-2 opacity-50"></i>
-                        ယခင်မှတ်တမ်း မရှိသေးပါ။
-                    </div>
-                `;
-                lucide.createIcons();
+                container.innerHTML = `<div class="p-8 text-center text-gray-400 text-xs">မှတ်တမ်းမရှိပါ။</div>`;
                 return;
             }
-
-            clearBtn.classList.remove('hidden');
-            container.innerHTML = historyList.map(item => {
-                let icon = 'text-align-left';
-                if (item.type === 'url') icon = 'link';
-                if (item.type === 'wifi') icon = 'wifi';
-
-                return `
-                    <div class="p-3.5 flex items-center justify-between">
-                        <div class="flex items-center gap-3 min-w-0 flex-1">
-                            <div class="w-9 h-9 rounded-xl bg-gray-50 dark:bg-zinc-800 flex items-center justify-center text-gray-500 flex-shrink-0">
-                                <i data-lucide="${icon}" class="w-4 h-4 text-primary-500"></i>
-                            </div>
-                            <div class="min-w-0 flex-1">
-                                <h4 class="text-xs font-semibold truncate pr-2 text-gray-800 dark:text-gray-200">${escapeHtml(item.content)}</h4>
-                                <span class="text-[10px] text-gray-400">${item.time}</span>
-                            </div>
-                        </div>
-                        <div class="flex gap-1.5 flex-shrink-0">
-                            <button onclick="copyToClipboard('${escapeHtml(item.content)}')" class="text-[10px] text-primary-500 font-bold active:scale-95 transition px-2 py-1 bg-primary-500/10 hover:bg-primary-500/20 rounded-lg">Copy</button>
-                            <button onclick="regenerateFromHistory('${escapeHtml(item.content)}', '${item.type}')" class="text-[10px] text-zinc-500 dark:text-zinc-400 font-bold active:scale-95 transition px-2 py-1 bg-gray-100 dark:bg-zinc-800 hover:bg-gray-200 dark:hover:bg-zinc-700 rounded-lg">ပြန်သုံးရန်</button>
-                        </div>
+            document.getElementById('clearHistoryBtn').classList.remove('hidden');
+            container.innerHTML = historyList.map(item => `
+                <div class="p-3.5 flex items-center justify-between">
+                    <div class="flex items-center gap-3 min-w-0 flex-1">
+                        <i data-lucide="${item.type === 'url' ? 'link' : 'text-align-left'}" class="w-4 h-4 text-primary-500"></i>
+                        <div class="truncate"><h4 class="text-xs font-semibold truncate text-gray-800 dark:text-gray-200">${item.content}</h4><span class="text-[10px] text-gray-400">${item.time}</span></div>
                     </div>
-                `;
-            }).join('');
-            
+                    <button onclick="copyToClipboard('${item.content}')" class="text-[10px] text-primary-500 font-bold px-2 py-1 bg-primary-500/10 rounded-lg">Copy</button>
+                </div>`).join('');
             lucide.createIcons();
         }
 
-        function clearHistory() {
-            historyList = [];
-            renderHistory();
-            showToast('မှတ်တမ်းများကို ရှင်းလင်းပြီးပါပြီ။');
-        }
+        function clearHistory() { historyList = []; renderHistory(); }
 
-        function regenerateFromHistory(content, type) {
-            navTo('generate');
-            switchInputType(type);
-            if (type === 'text') {
-                document.getElementById('qrText').value = content;
-            } else if (type === 'url') {
-                document.getElementById('qrUrl').value = content;
-            } else if (type === 'wifi') {
-                const ssidMatch = content.match(/S:([^;]+)/);
-                const passMatch = content.match(/P:([^;]+)/);
-                const typeMatch = content.match(/T:([^;]+)/);
-                
-                if (ssidMatch) document.getElementById('wifiSsid').value = ssidMatch[1];
-                if (passMatch) document.getElementById('wifiPass').value = passMatch[1];
-                if (typeMatch) document.getElementById('wifiType').value = typeMatch[1];
-            }
-            generateQRCode();
-        }
-
-        // Scan Result Modal
-        function showScanResultModal(content, type) {
-            activeScanResult = content;
-            document.getElementById('scanResultText').innerText = content;
-            const modal = document.getElementById('scanResultModal');
-            
-            // Logic for Open Link button
-            const openBtn = document.getElementById('openUrlBtn');
-            if (content.startsWith('http')) {
-                openBtn.classList.remove('hidden');
-                openBtn.onclick = () => window.open(content, '_blank');
-            } else {
-                openBtn.classList.add('hidden');
-            }
-
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-            lucide.createIcons();
-        }
-
-        function closeScanModal() {
-            const modal = document.getElementById('scanResultModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-        }
-
-        function copyScanResult() {
-            copyToClipboard(activeScanResult);
-            closeScanModal();
-        }
-
-        // Escape helper
-        function escapeHtml(text) {
-            return text
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
-        }
-
-        // Toast
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            document.getElementById('toast-message').innerText = message;
-            toast.style.opacity = '1';
-            toast.style.transform = 'translate(-50%, 0px)';
-            
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translate(-50%, 8px)';
-            }, 2500);
-        }
-
-        // ===== Download QR (Fixed - Working with Canvas) =====
         function downloadQR() {
             const canvas = document.querySelector('#qrcode canvas');
             if (canvas) {
-                const dataUrl = canvas.toDataURL("image/png");
-                try {
-                    if (typeof window.AndroidInterface !== 'undefined' && window.AndroidInterface) {
-                        window.AndroidInterface.downloadBase64Image(dataUrl);
-                        showToast('ပုံရိပ်ကို သိမ်းဆည်းနေပါသည်...');
-                    } else {
-                        const link = document.createElement('a');
-                        link.href = dataUrl;
-                        link.download = `Creator_QR_${Date.now()}.png`;
-                        document.body.appendChild(link);
-                        link.click();
-                        document.body.removeChild(link);
-                        showToast('ဒေါင်းလုဒ်လုပ်နေပါသည်...');
-                    }
-                } catch (error) {
-                    console.error('Download Error:', error);
-                    showToast('ဒေါင်းလုဒ်လုပ်ရာတွင် အမှားရှိပါသည်။');
-                }
-            } else {
-                showToast('QR Code မရှိသေးပါ။ ဦးစွာဖန်တီးပါ။');
-            }
+                const dataUrl = canvas.toDataURL("image/png", 1.0);
+                const link = document.createElement('a');
+                link.href = dataUrl;
+                link.download = `QR_${Date.now()}.png`;
+                link.click();
+                showToast('ဒေါင်းလုဒ်လုပ်နေပါသည်...');
+            } else showToast('QR မရှိသေးပါ။');
         }
 
-        // ===== Share QR (Fixed - Working with Native Share) =====
         async function shareQR() {
             const canvas = document.querySelector('#qrcode canvas');
             if (canvas) {
-                const dataUrl = canvas.toDataURL("image/png");
-                try {
-                    if (typeof window.AndroidInterface !== 'undefined' && window.AndroidInterface) {
-                        window.AndroidInterface.shareBase64Image(dataUrl);
-                    } else if (navigator.share) {
-                        const response = await fetch(dataUrl);
-                        const blob = await response.blob();
-                        const file = new File([blob], 'qrcode.png', { type: 'image/png' });
-                        
-                        await navigator.share({
-                            files: [file],
-                            title: 'Creator QR',
-                            text: 'Scan this QR code'
-                        });
-                    } else {
-                        const qrVal = document.getElementById('qrText').value || document.getElementById('qrUrl').value;
-                        copyToClipboard(qrVal);
-                        showToast('Share မရသဖြင့် စာသားကို Copy ကူးပေးလိုက်ပါသည်။');
-                    }
-                } catch (error) {
-                    console.error('Share Error:', error);
-                    showToast('Share လုပ်ရာတွင် အခက်အခဲရှိပါသည်။');
-                }
-            } else {
-                showToast('QR Code မရှိသေးပါ။ ဦးစွာဖန်တီးပါ။');
+                const blob = await (await fetch(canvas.toDataURL())).blob();
+                const file = new File([blob], 'qr.png', { type: 'image/png' });
+                if (navigator.share) await navigator.share({ files: [file] });
             }
         }
 
-        // Copy to Clipboard
         function copyToClipboard(text) {
             const el = document.createElement('textarea');
-            el.value = text;
-            document.body.appendChild(el);
-            el.select();
-            document.execCommand('copy');
+            el.value = text; document.body.appendChild(el);
+            el.select(); document.execCommand('copy');
             document.body.removeChild(el);
-            showToast('အချက်အလက်များကို ကူးယူပြီးပါပြီ။');
+            showToast('ကူးယူပြီးပါပြီ။');
         }
 
-        // Initial setup
-        window.onload = function() {
-            renderHistory();
+        function showToast(message) {
+            const t = document.getElementById('toast');
+            document.getElementById('toast-message').innerText = message;
+            t.style.opacity = '1'; t.style.transform = 'translate(-50%, 0px)';
+            setTimeout(() => { t.style.opacity = '0'; t.style.transform = 'translate(-50%, 8px)'; }, 2500);
         }
+
+        window.onload = renderHistory;
     </script>
 </body>
 </html>
