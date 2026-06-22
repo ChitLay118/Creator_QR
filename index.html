@@ -96,7 +96,7 @@
             <div class="bg-white dark:bg-zinc-900 p-4 rounded-2xl border border-gray-100 dark:border-zinc-800 shadow-sm space-y-4">
                 <h2 class="text-sm font-semibold uppercase tracking-wider text-gray-400 dark:text-zinc-500">QR အချက်အလက် အမျိုးအစား</h2>
                 
-                <!-- Tab Grid for Inputs (vCard Removed, Grid adjusted to 3 columns) -->
+                <!-- Tab Grid for Inputs -->
                 <div class="grid grid-cols-3 gap-2">
                     <button onclick="switchInputType('text')" class="type-tab p-2 rounded-xl flex flex-col items-center justify-center gap-1 border border-primary-500 bg-primary-50 dark:bg-primary-500/10 text-primary-500 transition" id="tab-text">
                         <i data-lucide="text-align-left" class="w-5 h-5"></i>
@@ -374,7 +374,7 @@
         <span id="toast-message">အောင်မြင်ပါသည်။</span>
     </div>
 
-    <!-- App Bottom Navigation Bar (Fixed at bottom like Native App) -->
+    <!-- App Bottom Navigation Bar -->
     <nav class="fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-zinc-900/95 border-t border-gray-200 dark:border-zinc-800 backdrop-blur-md px-4 py-2 pb-safe-bottom flex justify-around items-center">
         <button onclick="navTo('generate')" id="nav-generate" class="flex flex-col items-center justify-center py-1 text-primary-500 transition-colors w-16">
             <i data-lucide="qr-code" class="w-5 h-5"></i>
@@ -390,7 +390,7 @@
         </button>
     </nav>
 
-    <!-- Native App Script & Functionalities -->
+    <!-- Native App Script -->
     <script>
         // Init Lucide Icons
         lucide.createIcons();
@@ -416,7 +416,7 @@
             document.getElementById('bgColorText').innerText = e.target.value;
         });
 
-        // Theme Switcher (System Theme compatibility)
+        // Theme Switcher
         const themeToggleBtn = document.getElementById('themeToggleBtn');
         const htmlElement = document.documentElement;
         
@@ -433,36 +433,28 @@
             lucide.createIcons();
         });
 
-        // Input Type switcher logic
+        // Input Type switcher
         function switchInputType(type) {
             currentType = type;
-            // Hide all input groups
             document.querySelectorAll('.input-group').forEach(el => el.classList.add('hidden'));
-            // Show selected input group
             document.getElementById(`input-${type}`).classList.remove('hidden');
 
-            // Reset tabs styling
             document.querySelectorAll('.type-tab').forEach(tab => {
                 tab.className = "type-tab p-2 rounded-xl flex flex-col items-center justify-center gap-1 border border-gray-200 dark:border-zinc-800 hover:bg-gray-50 dark:hover:bg-zinc-800 text-gray-500 dark:text-zinc-400 transition";
             });
-            // Set active style to selected tab
             const activeTab = document.getElementById(`tab-${type}`);
             activeTab.className = "type-tab p-2 rounded-xl flex flex-col items-center justify-center gap-1 border border-primary-500 bg-primary-50 dark:bg-primary-500/10 text-primary-500 transition";
         }
 
-        // Navigation Router (Native app simulation)
+        // Navigation
         function navTo(pageId) {
-            // Stop scanning if page is changed
             if (pageId !== 'scan') {
                 stopCameraScan();
             }
 
-            // Hide all pages
             document.querySelectorAll('main > section').forEach(el => el.classList.add('hidden-page'));
-            // Show selected page
             document.getElementById(`page-${pageId}`).classList.remove('hidden-page');
 
-            // Update Nav item colors
             const navItems = ['generate', 'scan', 'profile'];
             navItems.forEach(item => {
                 const navBtn = document.getElementById(`nav-${item}`);
@@ -478,11 +470,10 @@
             });
         }
 
-        // Main QR Generator Logic
+        // QR Generator
         function generateQRCode() {
             let qrValue = "";
             
-            // Build content based on selected type
             if (currentType === 'text') {
                 qrValue = document.getElementById('qrText').value;
             } else if (currentType === 'url') {
@@ -506,10 +497,8 @@
             const fgColor = document.getElementById('fgColor').value;
             const bgColor = document.getElementById('bgColor').value;
 
-            // Clear previous QR Code container
             document.getElementById('qrcode').innerHTML = "";
 
-            // Create new instance of QRCodejs
             qrcodeInstance = new QRCode(document.getElementById('qrcode'), {
                 text: qrValue,
                 width: 200,
@@ -519,37 +508,33 @@
                 correctLevel: QRCode.CorrectLevel.H
             });
 
-            // Add generated code to real history list
             addToHistory(currentType, qrValue);
 
-            // Smoothly reveal result box
             const resultCard = document.getElementById('resultCard');
             resultCard.classList.remove('hidden');
             resultCard.scrollIntoView({ behavior: 'smooth' });
             showToast('QR Code ဖန်တီးပြီးပါပြီ။');
         }
 
-        // Live Camera Scanner Core Logic
+        // Camera Scanner
         async function startCameraScan() {
             if (isScanning) return;
             showToast('ကင်မရာ အသုံးပြုခွင့်တောင်းခံနေပါသည်...');
 
             try {
-                // Request environment (back) camera
                 const stream = await navigator.mediaDevices.getUserMedia({
                     video: { facingMode: "environment", width: { ideal: 400 }, height: { ideal: 400 } }
                 });
                 
                 videoStream = stream;
                 videoElement.srcObject = stream;
-                videoElement.setAttribute("playsinline", true); // Required for iOS webview
+                videoElement.setAttribute("playsinline", true);
                 videoElement.play();
                 
                 isScanning = true;
                 cameraCard.classList.remove('hidden');
                 controlsCard.classList.add('hidden');
                 
-                // Start frame analysis loop
                 requestAnimationFrame(tickCamera);
             } catch (err) {
                 console.error(err);
@@ -569,7 +554,6 @@
             controlsCard.classList.remove('hidden');
         }
 
-        // Analyze video frames for QR Code using jsQR library
         function tickCamera() {
             if (!isScanning) return;
 
@@ -586,7 +570,6 @@
                 });
 
                 if (code && code.data.trim() !== "") {
-                    // Successfully decoded!
                     const content = code.data;
                     let detectedType = 'text';
                     if (content.startsWith('http://') || content.startsWith('https://')) {
@@ -595,24 +578,20 @@
                         detectedType = 'wifi';
                     }
 
-                    // Stop camera first
                     stopCameraScan();
-                    
-                    // Add to real history list and open results
                     addToHistory(detectedType, content);
                     showScanResultModal(content, detectedType);
                     showToast('QR Code ဖတ်ရှုခြင်း အောင်မြင်ပါသည်။');
-                    return; // exit loop
+                    return;
                 }
             }
             
-            // Loop next frame
             if (isScanning) {
                 requestAnimationFrame(tickCamera);
             }
         }
 
-        // Real Scan QR Code from Image File Upload (Runs fully offline)
+        // Scan QR Image
         function scanQRImage(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -644,7 +623,6 @@
                                 detectedType = 'wifi';
                             }
                             
-                            // Save to real history and update views
                             addToHistory(detectedType, content);
                             showScanResultModal(content, detectedType);
                             showToast('QR Code ဖတ်ရှုခြင်း အောင်မြင်ပါသည်။');
@@ -654,7 +632,6 @@
                     } catch (err) {
                         showToast('စစ်ဆေးရာတွင် အမှားအယွင်းရှိခဲ့သည်။');
                     }
-                    // Reset value for re-selecting same image
                     document.getElementById('qr-file-input').value = "";
                 };
                 img.src = e.target.result;
@@ -662,7 +639,7 @@
             reader.readAsDataURL(file);
         }
 
-        // Add to Real History Helper
+        // History
         function addToHistory(type, content) {
             const timeString = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             const dateString = new Date().toLocaleDateString([], { month: 'short', day: 'numeric' });
@@ -674,11 +651,10 @@
                 time: `${dateString}၊ ${timeString}`
             };
 
-            historyList.unshift(newItem); // Add new records at first position
+            historyList.unshift(newItem);
             renderHistory();
         }
 
-        // Render Real History Dynamic Items
         function renderHistory() {
             const container = document.getElementById('history-container');
             const clearBtn = document.getElementById('clearHistoryBtn');
@@ -723,14 +699,12 @@
             lucide.createIcons();
         }
 
-        // Clear All History
         function clearHistory() {
             historyList = [];
             renderHistory();
             showToast('မှတ်တမ်းများကို ရှင်းလင်းပြီးပါပြီ။');
         }
 
-        // Regenerate and fill fields dynamically from selected history card
         function regenerateFromHistory(content, type) {
             navTo('generate');
             switchInputType(type);
@@ -739,7 +713,6 @@
             } else if (type === 'url') {
                 document.getElementById('qrUrl').value = content;
             } else if (type === 'wifi') {
-                // Parse standard string WIFI:S:MySSID;T:WPA;P:MyPassword;;
                 const ssidMatch = content.match(/S:([^;]+)/);
                 const passMatch = content.match(/P:([^;]+)/);
                 const typeMatch = content.match(/T:([^;]+)/);
@@ -751,7 +724,7 @@
             generateQRCode();
         }
 
-        // Popup Scan Results
+        // Scan Result Modal
         function showScanResultModal(content, type) {
             activeScanResult = content;
             document.getElementById('scanResultText').innerText = content;
@@ -782,7 +755,7 @@
                 .replace(/'/g, "&#039;");
         }
 
-        // Custom Toast Notification System
+        // Toast
         function showToast(message) {
             const toast = document.getElementById('toast');
             document.getElementById('toast-message').innerText = message;
@@ -795,47 +768,61 @@
             }, 2500);
         }
 
-        // ===== UPDATED: Download QR image (Android Native Bridge Support) =====
+        // ===== Download QR (Android Native Bridge) =====
         function downloadQR() {
             const qrImg = document.querySelector('#qrcode img');
             if (qrImg && qrImg.src) {
-                // Android App ရဲ့ Java Native Interface ဆီသို့ Base64 String လှမ်းပို့ခြင်း
-                if (window.AndroidInterface) {
-                    window.AndroidInterface.downloadBase64Image(qrImg.src);
-                    showToast('ပုံရိပ်ကို သိမ်းဆည်းနေပါသည်...');
-                } else {
-                    // Browser Web Fallback
-                    const link = document.createElement('a');
-                    link.href = qrImg.src;
-                    link.download = `Creator_QR_${Date.now()}.png`;
-                    link.click();
+                try {
+                    if (typeof window.AndroidInterface !== 'undefined' && window.AndroidInterface) {
+                        window.AndroidInterface.downloadBase64Image(qrImg.src);
+                        showToast('ပုံရိပ်ကို သိမ်းဆည်းနေပါသည်...');
+                    } else {
+                        // Browser Fallback
+                        const link = document.createElement('a');
+                        link.href = qrImg.src;
+                        link.download = `Creator_QR_${Date.now()}.png`;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                        showToast('ဒေါင်းလုဒ်လုပ်နေပါသည်...');
+                    }
+                } catch (error) {
+                    console.error('Download Error:', error);
+                    showToast('ဒေါင်းလုဒ်လုပ်ရာတွင် အမှားရှိပါသည်။');
                 }
             } else {
-                showToast('ဒေါင်းလုဒ်လုပ်ရန် အဆင်မပြေသေးပါ။');
+                showToast('QR Code မရှိသေးပါ။ ဦးစွာဖန်တီးပါ။');
             }
         }
 
-        // ===== UPDATED: Share QR (Android Native Bridge Support) =====
+        // ===== Share QR (Android Native Bridge) =====
         function shareQR() {
             const qrImg = document.querySelector('#qrcode img');
             if (qrImg && qrImg.src) {
-                if (window.AndroidInterface) {
-                    window.AndroidInterface.shareBase64Image(qrImg.src);
-                } else if (navigator.share) {
-                    // Browser Web Fallback
-                    fetch(qrImg.src)
-                        .then(res => res.blob())
-                        .then(blob => {
-                            const file = new File([blob], 'qrcode.png', { type: blob.type });
-                            navigator.share({ files: [file], title: 'Creator QR' }).catch(() => {});
-                        });
-                } else {
-                    copyToClipboard(document.getElementById('qrText').value || document.getElementById('qrUrl').value);
+                try {
+                    if (typeof window.AndroidInterface !== 'undefined' && window.AndroidInterface) {
+                        window.AndroidInterface.shareBase64Image(qrImg.src);
+                    } else if (navigator.share) {
+                        fetch(qrImg.src)
+                            .then(res => res.blob())
+                            .then(blob => {
+                                const file = new File([blob], 'qrcode.png', { type: blob.type });
+                                navigator.share({ files: [file], title: 'Creator QR' }).catch(() => {});
+                            });
+                    } else {
+                        copyToClipboard(document.getElementById('qrText').value || document.getElementById('qrUrl').value);
+                        showToast('အချက်အလက်များကို ကူးယူပြီးပါပြီ။');
+                    }
+                } catch (error) {
+                    console.error('Share Error:', error);
+                    showToast('Share လုပ်ရာတွင် အမှားရှိပါသည်။');
                 }
+            } else {
+                showToast('QR Code မရှိသေးပါ။ ဦးစွာဖန်တီးပါ။');
             }
         }
 
-        // Copy Clipboard Utility for WebView context
+        // Copy to Clipboard
         function copyToClipboard(text) {
             const el = document.createElement('textarea');
             el.value = text;
@@ -846,7 +833,7 @@
             showToast('အချက်အလက်များကို ကူးယူပြီးပါပြီ။');
         }
 
-        // Initial setup for History on start
+        // Initial setup
         window.onload = function() {
             renderHistory();
         }
