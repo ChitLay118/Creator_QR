@@ -336,7 +336,7 @@
 
             <!-- Credits and Love -->
             <div class="text-center py-4">
-                <p class="text-xs text-gray-400 dark:text-zinc-500">Made with ❤️ by NOVANEX Development</p>
+                <p class="text-xs text-gray-400 dark:text-zinc-500">Made with  by NOVANEX Development</p>
             </div>
         </section>
 
@@ -795,40 +795,43 @@
             }, 2500);
         }
 
-        // Download QR image
+        // ===== UPDATED: Download QR image (Android Native Bridge Support) =====
         function downloadQR() {
             const qrImg = document.querySelector('#qrcode img');
-            if (qrImg) {
-                const link = document.createElement('a');
-                link.href = qrImg.src;
-                link.download = `Creator_QR_${Date.now()}.png`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                showToast('ပုံရိပ်ကို ဒေါင်းလုဒ်လုပ်နေပါသည်...');
+            if (qrImg && qrImg.src) {
+                // Android App ရဲ့ Java Native Interface ဆီသို့ Base64 String လှမ်းပို့ခြင်း
+                if (window.AndroidInterface) {
+                    window.AndroidInterface.downloadBase64Image(qrImg.src);
+                    showToast('ပုံရိပ်ကို သိမ်းဆည်းနေပါသည်...');
+                } else {
+                    // Browser Web Fallback
+                    const link = document.createElement('a');
+                    link.href = qrImg.src;
+                    link.download = `Creator_QR_${Date.now()}.png`;
+                    link.click();
+                }
             } else {
                 showToast('ဒေါင်းလုဒ်လုပ်ရန် အဆင်မပြေသေးပါ။');
             }
         }
 
-        // Share QR (Fallback clipboard / Web share API)
+        // ===== UPDATED: Share QR (Android Native Bridge Support) =====
         function shareQR() {
             const qrImg = document.querySelector('#qrcode img');
-            if (navigator.share && qrImg) {
-                fetch(qrImg.src)
-                    .then(res => res.blob())
-                    .then(blob => {
-                        const file = new File([blob], 'qrcode.png', { type: blob.type });
-                        navigator.share({
-                            files: [file],
-                            title: 'Creator QR Code',
-                            text: 'Created using Creator QR Toolkit by NOVANEX'
-                        }).catch(err => {
-                            copyToClipboard(qrImg.src);
+            if (qrImg && qrImg.src) {
+                if (window.AndroidInterface) {
+                    window.AndroidInterface.shareBase64Image(qrImg.src);
+                } else if (navigator.share) {
+                    // Browser Web Fallback
+                    fetch(qrImg.src)
+                        .then(res => res.blob())
+                        .then(blob => {
+                            const file = new File([blob], 'qrcode.png', { type: blob.type });
+                            navigator.share({ files: [file], title: 'Creator QR' }).catch(() => {});
                         });
-                    });
-            } else {
-                copyToClipboard(document.getElementById('qrText').value || document.getElementById('qrUrl').value);
+                } else {
+                    copyToClipboard(document.getElementById('qrText').value || document.getElementById('qrUrl').value);
+                }
             }
         }
 
