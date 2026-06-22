@@ -525,6 +525,40 @@
             }
         }
 
+        // ===== Download QR (FIXED for Bridge) =====
+        function downloadQR() {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (canvas) {
+                const dataUrl = canvas.toDataURL("image/png", 1.0);
+                if (window.AndroidInterface && window.AndroidInterface.downloadBase64Image) {
+                    window.AndroidInterface.downloadBase64Image(dataUrl);
+                } else {
+                    const link = document.createElement('a');
+                    link.href = dataUrl;
+                    link.download = `QR_${Date.now()}.png`;
+                    link.click();
+                    showToast('ဒေါင်းလုဒ်လုပ်နေပါသည်...');
+                }
+            } else showToast('QR မရှိသေးပါ။');
+        }
+
+        // ===== Share QR (FIXED for Bridge) =====
+        async function shareQR() {
+            const canvas = document.querySelector('#qrcode canvas');
+            if (canvas) {
+                const dataUrl = canvas.toDataURL("image/png", 1.0);
+                if (window.AndroidInterface && window.AndroidInterface.shareBase64Image) {
+                    window.AndroidInterface.shareBase64Image(dataUrl);
+                } else if (navigator.share) {
+                    const blob = await (await fetch(dataUrl)).blob();
+                    const file = new File([blob], 'qr.png', { type: 'image/png' });
+                    await navigator.share({ files: [file] }).catch(() => {});
+                } else {
+                    showToast('Share API ကို မထောက်ပံ့ပါ။');
+                }
+            } else showToast('QR မရှိသေးပါ။');
+        }
+
         // CAMERA SCANNER
         async function startCameraScan() {
             if (isScanning) return;
@@ -627,33 +661,12 @@
 
         function clearHistory() { historyList = []; renderHistory(); }
 
-        function downloadQR() {
-            const canvas = document.querySelector('#qrcode canvas');
-            if (canvas) {
-                const dataUrl = canvas.toDataURL("image/png", 1.0);
-                const link = document.createElement('a');
-                link.href = dataUrl;
-                link.download = `QR_${Date.now()}.png`;
-                link.click();
-                showToast('ဒေါင်းလုဒ်လုပ်နေပါသည်...');
-            } else showToast('QR မရှိသေးပါ။');
-        }
-
-        async function shareQR() {
-            const canvas = document.querySelector('#qrcode canvas');
-            if (canvas) {
-                const blob = await (await fetch(canvas.toDataURL())).blob();
-                const file = new File([blob], 'qr.png', { type: 'image/png' });
-                if (navigator.share) await navigator.share({ files: [file] });
-            }
-        }
-
         function copyToClipboard(text) {
             const el = document.createElement('textarea');
             el.value = text; document.body.appendChild(el);
             el.select(); document.execCommand('copy');
             document.body.removeChild(el);
-            showToast('ကူးယူပြီးပါပြီ။');
+            showToast('အချက်အလက်များကို ကူးယူပြီးပါပြီ။');
         }
 
         function showToast(message) {
